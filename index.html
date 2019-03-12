@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sono</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css"> -->
+
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/pt-br.js"></script>
+	<!-- <script src="main.js"></script> -->
+
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<input type="datetime-local" id="dataHoraAcordar" value="" />
+	</div>
+	<div id="possibilidadesDormir"></div>
+
+
+	<script>
+		moment.locale('pt-br');
+		horaAcordar = moment().add(1, 'day').set('hour', 06).set('minute', 00);
+
+		horainput = `${horaAcordar.year()}-${(horaAcordar.month()+1).toString().padStart(2, 0)}-${horaAcordar.date().toString().padStart(2, 0)}T${horaAcordar.hours().toString().padStart(2, 0)}:${horaAcordar.minutes().toString().padStart(2, 0)}`;
+		document.getElementById('dataHoraAcordar').value = horainput;
+
+		possibilidadesDormir = [];
+
+		for (var i = 1; i <= 16; i++) {
+			possibilidadesDormir[i -1] = moment(horaAcordar);
+			possibilidadesDormir[i -1].minutes(-1 * (90 * i));
+
+			if (possibilidadesDormir[i - 1].toDate() < moment().set('millisecond', possibilidadesDormir[i - 1].get('millisecond')).toDate()) {
+				possibilidadesDormir[i - 1] = undefined;
+			}
+		}
+
+		for (var horario of possibilidadesDormir) {
+			if (horario !== undefined) {
+				console.log(horario.format('HH:mm'));
+				document.getElementById('possibilidadesDormir').innerHTML += (horario.format('HH:mm')) + '<br>';
+			}
+		}
+	</script>
+</body>
+</html>
