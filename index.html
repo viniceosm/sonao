@@ -18,38 +18,48 @@
 			font-family: 'Open Sans', sans-serif;
 			background-color: black;
 			color: white;
+			padding: 5px;
+		}
+		#possibilidadesDormir {
+			margin-top: 10px;
+			border: 1px solid black;
 		}
 	</style>
 </head>
 <body>
 	<div>
+		<label for="dataHoraAcordar">horas acordar</label>
 		<input type="datetime-local" id="dataHoraAcordar" value="" />
 	</div>
 	<div id="possibilidadesDormir"></div>
 
 
 	<script>
-		moment.locale('pt-br');
-		horaAcordar = moment().add(1, 'day').set('hour', 06).set('minute', 00);
+		calcula();
+		
+		function calcula() {
+			moment.locale('pt-br');
+			horaAcordar = moment().add(1, 'day').set('hour', 06).set('minute', 00);
 
-		horainput = `${horaAcordar.year()}-${(horaAcordar.month()+1).toString().padStart(2, 0)}-${horaAcordar.date().toString().padStart(2, 0)}T${horaAcordar.hours().toString().padStart(2, 0)}:${horaAcordar.minutes().toString().padStart(2, 0)}`;
-		document.getElementById('dataHoraAcordar').value = horainput;
+			horainput = `${horaAcordar.year()}-${(horaAcordar.month()+1).toString().padStart(2, 0)}-${horaAcordar.date().toString().padStart(2, 0)}T${horaAcordar.hours().toString().padStart(2, 0)}:${horaAcordar.minutes().toString().padStart(2, 0)}`;
+			document.getElementById('dataHoraAcordar').value = horainput;
 
-		possibilidadesDormir = [];
+			possibilidadesDormir = [];
 
-		for (var i = 1; i <= 16; i++) {
-			possibilidadesDormir[i -1] = moment(horaAcordar);
-			possibilidadesDormir[i -1].minutes(-1 * (90 * i));
+			for (var i = 1; i <= 16; i++) {
+				possibilidadesDormir[i -1] = moment(horaAcordar);
+				possibilidadesDormir[i -1].minutes(-1 * (90 * i));
 
-			if (possibilidadesDormir[i - 1].toDate() < moment().set('millisecond', possibilidadesDormir[i - 1].get('millisecond')).toDate()) {
-				possibilidadesDormir[i - 1] = undefined;
+				if (possibilidadesDormir[i - 1].toDate() < moment().set('millisecond', possibilidadesDormir[i - 1].get('millisecond')).toDate()) {
+					possibilidadesDormir[i - 1] = undefined;
+				}
 			}
-		}
 
-		for (var horario of possibilidadesDormir) {
-			if (horario !== undefined) {
-				console.log(horario.format('HH:mm'));
-				document.getElementById('possibilidadesDormir').innerHTML += (horario.format('HH:mm')) + '<br>';
+			for (var horario of possibilidadesDormir) {
+				if (horario !== undefined) {
+					console.log(horario.format('HH:mm'));
+					document.getElementById('possibilidadesDormir').innerHTML += (horario.format('HH:mm')) + '<br>';
+				}
 			}
 		}
 	</script>
