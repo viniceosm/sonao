@@ -1,0 +1,22 @@
+body {
+	font-family: 'Open Sans', sans-serif;
+	background-color: black;
+	color: white;
+	padding: 5px;
+}
+
+#divPossibilidadesDormir {
+	margin-top: 10px;
+	border: 1px solid white;
+}
+
+#dataHoraAcordar {
+	background-color: darkgrey;
+	color: white;
+	border: none;
+	outline: none;
+}
+
+#areaInput, #divPossibilidadesDormir {
+	text-align: center;
+}
