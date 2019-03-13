@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>sono</title>
+	<title>Sonão</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 	<!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css"> -->
@@ -20,48 +21,85 @@
 			color: white;
 			padding: 5px;
 		}
-		#possibilidadesDormir {
+
+		#divPossibilidadesDormir {
 			margin-top: 10px;
-			border: 1px solid black;
+			border: 1px solid white;
+		}
+
+		#dataHoraAcordar {
+			background-color: darkgrey;
+			color: white;
+			border: none;
+			outline: none;
+		}
+
+		#areaInput, #divPossibilidadesDormir {
+			text-align: center;
 		}
 	</style>
 </head>
+
 <body>
-	<div>
-		<label for="dataHoraAcordar">horas acordar</label>
+	<div id="areaInput">
+		<label for="dataHoraAcordar">horário que você deseja acordar</label><br>
 		<input type="datetime-local" id="dataHoraAcordar" value="" />
 	</div>
-	<div id="possibilidadesDormir"></div>
+
+	<div id="divPossibilidadesDormir"></div>
 
 
 	<script>
+		moment.locale('pt-br');
+
 		calcula();
-		
+
+		document.getElementById('dataHoraAcordar').addEventListener('change', function () {
+			calcula();
+		});
+
 		function calcula() {
-			moment.locale('pt-br');
-			horaAcordar = moment().add(1, 'day').set('hour', 06).set('minute', 00);
+			let horarioAcordar = '';
 
-			horainput = `${horaAcordar.year()}-${(horaAcordar.month()+1).toString().padStart(2, 0)}-${horaAcordar.date().toString().padStart(2, 0)}T${horaAcordar.hours().toString().padStart(2, 0)}:${horaAcordar.minutes().toString().padStart(2, 0)}`;
-			document.getElementById('dataHoraAcordar').value = horainput;
+			valueInput = document.getElementById('dataHoraAcordar').value;
 
-			possibilidadesDormir = [];
+			if (valueInput.trim() == '') {
+				horarioAcordar = moment().add(1, 'day').set('hour', 06).set('minute', 00);
 
-			for (var i = 1; i <= 16; i++) {
-				possibilidadesDormir[i -1] = moment(horaAcordar);
-				possibilidadesDormir[i -1].minutes(-1 * (90 * i));
+				horainput = isoDateInDatetimeInput(horarioAcordar);
+				document.getElementById('dataHoraAcordar').value = horainput;
+			} else {
+				horarioAcordar = moment(new Date(valueInput));
+			}
+
+			let possibilidadesDormir = [];
+
+			for (let i = 1; i <= 16; i++) {
+				possibilidadesDormir[i - 1] = moment(horarioAcordar).clone();
+				possibilidadesDormir[i - 1].subtract((90 * i), 'minutes');
 
 				if (possibilidadesDormir[i - 1].toDate() < moment().set('millisecond', possibilidadesDormir[i - 1].get('millisecond')).toDate()) {
 					possibilidadesDormir[i - 1] = undefined;
 				}
 			}
 
+			document.getElementById('divPossibilidadesDormir').innerHTML = '';
+
 			for (var horario of possibilidadesDormir) {
 				if (horario !== undefined) {
-					console.log(horario.format('HH:mm'));
-					document.getElementById('possibilidadesDormir').innerHTML += (horario.format('HH:mm')) + '<br>';
+					document.getElementById('divPossibilidadesDormir').innerHTML += (horario.format('DD/MM HH:mm')) + '<br>';
 				}
 			}
 		}
+
+		function toStringPad2digits0(number) {
+			return number.toString().padStart(2, 0);
+		}
+
+		function isoDateInDatetimeInput(date) {
+			return `${date.year()}-${toStringPad2digits0(date.month() + 1)}-${toStringPad2digits0(date.date())}T${toStringPad2digits0(date.hours())}:${toStringPad2digits0(date.minutes())}`;
+		}
 	</script>
 </body>
+
 </html>
